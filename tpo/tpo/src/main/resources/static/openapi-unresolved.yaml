@@ -37,7 +37,7 @@ paths:
       responses:
         '201':
           description: Usuario registrado exitosamente.
-  /usuarios/login:
+  /user/login:
     post:
       summary: Iniciar sesión
       operationId: loginUsuario
@@ -146,18 +146,19 @@ paths:
       responses:
         '201':
           description: Turno reservado exitosamente.
-  /appointments/cancel:
+  /appointments/cancel/{appointmentId}:
     delete:
       summary: Cancelar un turno
       operationId: cancelarTurno
       security:
         - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CancelationAppointment'
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          description: Appointment ID
+          schema:
+            type: integer
       responses:
         '200':
           description: Turno cancelado correctamente.
@@ -182,12 +183,19 @@ paths:
       responses:
         '200':
           description: Lista de médicos.
-  /studies/results:
+  /studies/results/{dniDoctor}:
     get:
       summary: Obtener imágenes de resultados de estudios
       operationId: obtenerResultadosEstudios
       security:
         - bearerAuth: []
+      parameters:
+        - name: dniDoctor
+          in: path
+          required: true
+          description: Doctor DNI
+          schema:
+            type: integer
       responses:
         '200':
           description: Lista de imágenes de estudios.
@@ -218,10 +226,8 @@ components:
           type: string
         dni:
           type: integer
-        insuranceCompany:
+        email:
           type: string
-        afiliateNumber:
-          type: integer
     Insurance:
       type: object
       properties:
@@ -239,11 +245,6 @@ components:
         date:
           type: string
           format: date-time
-    CancelationAppointment:
-      type: object
-      properties:
-        appointmentId:
-          type: integer
   securitySchemes:
     bearerAuth:
       type: http
