@@ -1,9 +1,10 @@
 package com.uade.tpo.TurnosYa.service.implementation;
 
-import org.apache.commons.validator.routines.EmailValidator;
+import java.security.SecureRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.TurnosYa.entity.User;
@@ -18,36 +19,13 @@ public class UserService implements UserServiceInterface {
     @Autowired
     private UserRepository userRepository;
 
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public User getUser(UserDetails userDetails) {
         String email = userDetails.getUsername();
         User u = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException(""));
         return u;
-    }
-
-    @Override
-    public void createUser(UserRequest userRequest) {
-        User u = new User();
-        int dni = userRequest.getDNI();
-        if (userRepository.existsByDNI(dni)){
-            u.setDNI(dni);
-        }else{
-            throw new RuntimeException("El usuario ya existe");
-        }
-        u.setName(userRequest.getName());
-        String email = userRequest.getEmail();
-        if (EmailValidator.getInstance().isValid(email)){
-            u.setEmail(email);
-        }else{
-            throw new RuntimeException("Email invalido");
-        }
-        String password = userRequest.getPassword();
-        if (password == null ? userRequest.getConfirm_password() == null : password.equals(userRequest.getConfirm_password())){
-            u.setPassword(password);
-        }else{
-            throw new RuntimeException("La contraseña no coincide");
-        }
-        userRepository.save(u);
     }
 
     @Override
@@ -61,8 +39,8 @@ public class UserService implements UserServiceInterface {
         User u = getUser(userDetails);
         u.setName(userRequest.getName());
         String password = userRequest.getPassword();
-        if (password == null){
-            u.setPassword(password);
+        if (password != null){
+            u.setPassword(passwordEncoder.encode(password));
         }else{
             throw new RuntimeException("La contraseña no puede ser vacia");
         }
@@ -84,6 +62,16 @@ public class UserService implements UserServiceInterface {
         userRequest.setCompany(u.getCompany().toString());
         userRequest.setAffiliateNumber(u.getAffiliateNumber());
         return userRequest;
+    }
+
+    @Override
+    public int changePassword(String email){
+        SecureRandom random = new SecureRandom();
+        int code = 100000 + random.nextInt(900000); 
+        if (!userRepository.existsByEmail(email)){
+            throw new RuntimeException("EL email no esta registrado en el sistema");
+        }
+        return code;
     }
     
 }
