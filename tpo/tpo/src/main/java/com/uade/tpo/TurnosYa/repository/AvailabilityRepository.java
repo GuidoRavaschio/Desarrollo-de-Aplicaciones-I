@@ -1,5 +1,6 @@
 package com.uade.tpo.TurnosYa.repository;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +19,18 @@ public interface AvailabilityRepository extends JpaRepository<Availability, Long
 
     @Query("SELECT a FROM Availability WHERE a.doctor.id = :doctor_id")
     List<Availability> findAvailabilityByDoctor(@Param("doctor_id") Long doctor_id);
+
+    @Query("""
+    SELECT a FROM Availability a 
+    WHERE (:doctor_id IS NULL OR a.doctor.id IN :doctor_id)
+    AND (:weekdays IS NULL OR a.weekday IN :weekdays)
+    AND (:time IS NULL OR :time BETWEEN a.startTime AND a.endTime)
+""")
+List<Availability> findByOptionalWeekdaysAndTime(
+    @Param("doctor_id") List<Long> doctor_id,
+    @Param("weekdays") List<Weekdays> weekdays,
+    @Param("time") LocalTime time
+);
+
+
 }

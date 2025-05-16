@@ -10,7 +10,7 @@ import com.uade.tpo.TurnosYa.entity.enumerations.Weekdays;
 public interface AvailabilityServiceInterface {
     public void createAvailability(Doctor doctor, Weekdays weekday, int shift);
     public List<AvailabilityRequest> getAvailabilityByDoctor(Long doctor_id);
-    public List<AvailabilityRequest> getAvailabilityByWeekdayAndTime(Weekdays weekday, LocalTime time);
+    public List<AvailabilityRequest> getAvailability(List<Long> doctor_id, List<Weekdays> weekday, LocalTime time);
     public void deleteAvailability(AvailabilityRequest availabilityRequest);
     public void editAvailability(AvailabilityRequest availabilityRequest);
 }

@@ -3,9 +3,11 @@ package com.uade.tpo.TurnosYa.entity.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class AppointmentRequest {
     private Long id;
     private Long doctorId; 

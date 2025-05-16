@@ -3,6 +3,7 @@ package com.uade.tpo.TurnosYa.service.implementation;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,23 +32,20 @@ public class AvailabilityService implements AvailabilityServiceInterface{
         List<Availability> a = availabilityRepository.findAvailabilityByDoctor(doctor_id);
         List<AvailabilityRequest> ars = new ArrayList<>();
         for (Availability availability : a){
-            AvailabilityRequest ar = AvailabilityRequest.builder()
-                                                        .doctorId(doctor_id)
-                                                        .weekday(availability.getWeekday())
-                                                        .starTime(availability.getStartTime())
-                                                        .endTime(availability.getEndTime())
-                                                        .build();
-            ars.add(ar);
+            ars.add(mapToRequest(availability));
         }
         return ars;
     }
 
     @Override
-    public List<AvailabilityRequest> getAvailabilityByWeekdayAndTime(Weekdays weekday, LocalTime time) {
-        
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAvailabilityByWeekdayAndTime'");
-    }
+public List<AvailabilityRequest> getAvailability(List<Long> doctor_id, List<Weekdays> weekdays, LocalTime time) {
+    return availabilityRepository
+        .findByOptionalWeekdaysAndTime(doctor_id, weekdays, time)
+        .stream()
+        .map(this::mapToRequest)
+        .collect(Collectors.toList());
+}
+
 
     @Override
     public void deleteAvailability(AvailabilityRequest availabilityRequest) {
@@ -75,5 +73,14 @@ public class AvailabilityService implements AvailabilityServiceInterface{
         availabilityRepository.save(a);
         return a;
     }
-    
+
+    private AvailabilityRequest mapToRequest(Availability availability) {
+    return AvailabilityRequest.builder()
+            .id(availability.getId())
+            .weekday(availability.getWeekday())
+            .startTime(availability.getStartTime())
+            .endTime(availability.getEndTime())
+            .doctorId(availability.getDoctor().getId())
+            .build();
+        }
 }

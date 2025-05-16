@@ -13,6 +13,6 @@ public class AvailabilityRequest {
     private Long id;
     private Long doctorId;
     private Weekdays weekday;
-    private LocalTime starTime;
+    private LocalTime startTime;
     private LocalTime endTime;
 }
