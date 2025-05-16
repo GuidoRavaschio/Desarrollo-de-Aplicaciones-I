@@ -1,6 +1,6 @@
 package com.uade.tpo.TurnosYa.entity;
 
-import com.uade.tpo.TurnosYa.entity.enumerations.*;
+import com.uade.tpo.TurnosYa.entity.enumerations.Company;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,5 +30,6 @@ public class InsuranceDoctor {
     private Doctor doctor;
 
     @Enumerated(EnumType.STRING)
-    private Company commpany;
+    @Builder.Default
+    private Company company = Company.PARTICULAR;
 }

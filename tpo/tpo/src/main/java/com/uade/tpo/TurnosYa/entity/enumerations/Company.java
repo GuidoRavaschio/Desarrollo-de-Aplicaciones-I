@@ -4,5 +4,5 @@ public enum Company {
     OSDE,
     MEDICUS,
     GALENO,
-    PARTICULAR
+    PARTICULAR,
 }
